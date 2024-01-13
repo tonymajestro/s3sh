@@ -4,12 +4,10 @@ const { getPrefix } = require('../utils/path');
 const ls = async (client, bucket, dirs) => {
   if (bucket) {
     const prefix = getPrefix(dirs);
-    const paths = await listObjectsInDirectory(client, bucket, dirs, prefix);
-    return paths.join('\n');
+    return await listObjectsInDirectory(client, bucket, dirs, prefix);
   } else {
     const buckets = await listBuckets(client);
-    buckets.sort();
-    return buckets.join('\n');
+    return buckets.sort();
   }
 };
 

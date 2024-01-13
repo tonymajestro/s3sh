@@ -15,11 +15,10 @@ const autocomplete = (shell) => {
       callback(null, [hits.length ? hits : commands, line]);
     } else if (parts.length == 2 && parts[0].trim() === 'cd') {
       // autocomplete buckets or s3 objects
-      shell.ls().then(output => {
-        const lsObjects = output.split('\n');
-        const currentPath = parts[1];
-        const hits = lsObjects.filter((c) => c.startsWith(currentPath));
-        callback(null, [hits.length ? hits : lsObjects, currentPath]);
+      shell.ls().then(paths => {
+        const argument = parts[1];
+        const hits = paths.filter((c) => c.startsWith(argument));
+        callback(null, [hits.length ? hits : lsObjects, argument]);
       });
     } else {
       callback(null, [[], line]);

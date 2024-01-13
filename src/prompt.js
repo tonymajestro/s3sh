@@ -18,8 +18,10 @@ const prompt = async (shell) => {
 
     switch (command) {
       case 'ls':
-        const output = await shell.ls();
-        console.log(output);
+        const paths = await shell.ls();
+        paths.forEach(path => {
+          console.log(path);
+        });
         break;
       case 'cd':
         await shell.cd(arg);

@@ -1,5 +1,6 @@
 const shell_ls = require('./commands/ls');
 const shell_cd = require('./commands/cd');
+const { join } = require('./utils/path');
 
 class S3Shell {
   constructor(client) {
@@ -11,11 +12,10 @@ class S3Shell {
   get prompt() {
     if (!this.bucket) {
       return '/$ ';
-    } else if (this.dirs.length == 0) {
-      return `/${this.bucket}/$ `;
-    } else {
-      return `/${this.bucket}/${this.dirs.join('/')}/$ `;
     }
+
+    const path = join(this.bucket, this.dirs, true, true);
+    return `${path}$ `;
   }
 
   async ls() {
