@@ -11,9 +11,6 @@ const prompt = async (shell) => {
 
   rl.prompt();
 
-  // rl.write will write to current line
-  // rl.line fetches the current line
-
   rl.on('line', async (line) => {
     const parts = line.split(' ');
     const command = parts[0];
