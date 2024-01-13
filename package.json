@@ -1,0 +1,16 @@
+{
+  "name": "s3sh",
+  "version": "0.0.1",
+  "description": "Shell utility for exploring and manipulating S3 files.",
+  "bin": "./src/s3sh",
+  "keywords": [
+    "shell",
+    "aws",
+    "s3"
+  ],
+  "author": "Tony Majestro",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.490.0"
+  }
+}

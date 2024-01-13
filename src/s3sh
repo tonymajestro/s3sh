@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+const S3Shell = require('./shell');
+const s3Utils = require('./utils/s3utils');
+const prompt = require('./prompt');
+
+const checkCredentials = async (client) => {
+  try {
+    s3Utils.listBuckets(client);
+  } catch(error) {
+    throw new Error("Error during initialization, access denied.");
+  }
+};
+
+const run = async () => {
+  const client = s3Utils.createClient();
+  const shell = new S3Shell(client);
+
+  await checkCredentials(client);
+  await prompt(shell);
+};
+
+run();
