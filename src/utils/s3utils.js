@@ -55,8 +55,7 @@ const checkCredentials = async (client) => {
   try {
     await listBuckets(client);
   } catch(error) {
-    console.error(error);
-    throw new Error("Error during initialization, access denied.");
+    throw new Error("Error during initialization access denied.");
   }
 };
 

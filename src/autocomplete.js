@@ -1,8 +1,10 @@
 const readline = require('readline');
 
 const commands = [
+  'cd',
+  'exit',
   'ls',
-  'cd'
+  'help'
 ];
 
 const autocomplete = (shell) => {
