@@ -9,7 +9,7 @@ An iteractive command line shell for navigating and manipulating files in AWS S3
 By default, s3sh will use the credentials in your ~/.aws/ directory.
 
 
-```
+```bash
 npx s3sh
 
 /$ cd my-bucket-name
@@ -27,7 +27,7 @@ file3.txt
 
 You can also require s3sh and use it as a library:
 
-```
+```javascript
 const s3sh = require('s3sh')
 const shell = s3sh.createShell();
 
