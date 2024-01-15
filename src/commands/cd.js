@@ -1,8 +1,8 @@
 const { listObjectsInDirectory, doesBucketExist } = require('../utils/s3utils');
-const { stripSlash, getPrefix } = require('../utils/path')
+const pathUtils = require('../utils/path')
 
 const cd = async (client, bucket, dirs, arg) => {
-  const path = stripSlash(arg);
+  const path = pathUtils.stripSlash(arg);
 
   // cd with no args will reset the path back to root directory
   if (!path) {
@@ -21,7 +21,7 @@ const cd = async (client, bucket, dirs, arg) => {
   
   // cd [bucket]
   if (!bucket) {
-    if (doesBucketExist(client, path)) {
+    if (await doesBucketExist(client, path)) {
       return { bucket: path, dirs };
     } else {
       console.log(`cd: no such bucket: ${path}`);
@@ -31,9 +31,9 @@ const cd = async (client, bucket, dirs, arg) => {
   
   // cd [path]
   // currently only supports one directory level at a time
-  const prefix = getPrefix(dirs);
+  const prefix = pathUtils.getPrefix(dirs);
   const objects = await listObjectsInDirectory(client, bucket, dirs, prefix);
-  if (objects.find(obj => stripSlash(obj) === path)) {
+  if (objects.find(obj => pathUtils.stripSlash(obj) === path)) {
     dirs.push(path);
     return { bucket, dirs };
   } else {

@@ -22,25 +22,37 @@ const getPrefix = (dirs) => {
   if (dirs.length == 0) {
     return '';
   }
-  return join('', dirs, false, true);
+
+  return join({
+    dirs: dirs, 
+    trailingSlash: true
+  });
 };
 
-const join = (bucket, dirs, initialSlash = false, trailingSlash = false) => {
-  let parts = [];
+const join = (args) => {
+  let { bucket = '', dirs = '', file = '', initialSlash = false, trailingSlash = false } = args;
+
+  const parts = [];
 
   if (bucket) {
     parts.push(bucket);
   }
 
   if (dirs) {
-    parts = parts.concat(dirs);
+    dirs.forEach(dir => {
+      parts.push(dir);
+    });
+  }
+
+  if (file) {
+    parts.push(file);
   }
 
   let start = initialSlash ? '/' : '';
   let end = trailingSlash ? '/' : '';
 
   return `${start}${parts.join('/')}${end}`;
-}
+};
 
 module.exports = {
   stripSlash,

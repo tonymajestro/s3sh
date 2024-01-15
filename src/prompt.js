@@ -3,8 +3,9 @@ const autocomplete = require('./autocomplete');
 
 const helpText = `
   usage:
-    ls       - prints files and directory names in current bucket/directory
+    cat      - prints contents of a file
     cd       - changes buckets or directory. 'cd ..' will go back one directory
+    ls       - prints files and directory names in current bucket/directory
     exit     - exits the s3sh shell
     help     - prints help text
 `;
@@ -32,6 +33,10 @@ const prompt = async (shell) => {
             console.log(path);
           });
           console.log();
+          break;
+        case 'cat':
+          const content = await shell.cat(arg);
+          console.log(content);
           break;
         case 'cd':
           await shell.cd(arg);

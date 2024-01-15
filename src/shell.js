@@ -1,6 +1,7 @@
 const shell_ls = require('./commands/ls');
 const shell_cd = require('./commands/cd');
-const { join } = require('./utils/path');
+const shell_cat = require('./commands/cat');
+const pathUtils = require('./utils/path');
 
 class S3Shell {
   constructor(client) {
@@ -14,7 +15,12 @@ class S3Shell {
       return '/$ ';
     }
 
-    const path = join(this.bucket, this.dirs, true, true);
+    const path = pathUtils.join({
+      bucket: this.bucket,
+      dirs: this.dirs,
+      initialSlash: true,
+      trailingSlash: true
+    });
     return `${path}$ `;
   }
 
@@ -26,6 +32,10 @@ class S3Shell {
     const { bucket, dirs } = await shell_cd(this.client, this.bucket, this.dirs, arg);
     this.bucket = bucket;
     this.dirs = dirs;
+  }
+
+  async cat(arg) {
+    return await shell_cat(this.client, this.bucket, this.dirs, arg);
   }
 }
 
