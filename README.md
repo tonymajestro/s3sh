@@ -25,5 +25,30 @@ file2.txt
 file3.txt
 ```
 
+You can also require s3sh and use it as a library:
+
+```
+const s3sh = require('s3sh')
+const shell = s3sh.createShell();
+
+const run = async () => {
+  console.log("Buckets:");
+  const buckets = await shell.ls();
+  console.log(buckets);
+
+  const bucket = buckets[0];
+  console.log(`cd into ${bucket}`);
+  await shell.cd(bucket);
+
+  console.log(`Directories in ${bucket}:`);
+  const dirs = await shell.ls();
+  dirs.forEach(dir => {
+    console.log(dir);
+  });
+};
+
+run();
+```
+
 ## Tab completion
 s3sh supports tab completion for available commands. It also supports autocompleting directory and folder names.

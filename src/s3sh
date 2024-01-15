@@ -4,12 +4,20 @@ const S3Shell = require('./shell');
 const s3Utils = require('./utils/s3utils');
 const prompt = require('./prompt');
 
-const run = async () => {
+const createShell = () => {
   const client = s3Utils.createClient();
-  const shell = new S3Shell(client);
+  return new S3Shell(client);
+}
 
+const run = async () => {
   await s3Utils.checkCredentials(client);
   await prompt(shell);
 };
 
-run();
+if (require.main === module) {
+  run();
+}
+
+module.exports = {
+  createShell
+};
