@@ -1,9 +1,8 @@
 # s3sh
+An iteractive command line shell for navigating and manipulating files in AWS S3.
+
 ## NPM
 https://www.npmjs.com/package/s3sh
-
-## Description
-An iteractive command line shell for navigating and manipulating files in AWS S3.
 
 ## Usage
 By default, s3sh will use the credentials in your ~/.aws/ directory.
