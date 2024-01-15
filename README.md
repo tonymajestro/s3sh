@@ -51,4 +51,4 @@ run();
 ```
 
 ## Tab completion
-s3sh supports tab completion for available commands. It also supports autocompleting directory and folder names.
+s3sh supports tab completion for available commands. It also supports autocompleting directory and file names.

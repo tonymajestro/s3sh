@@ -10,6 +10,9 @@ const createShell = () => {
 }
 
 const run = async () => {
+  const client = s3Utils.createClient();
+  const shell = new S3Shell(client);
+
   await s3Utils.checkCredentials(client);
   await prompt(shell);
 };
