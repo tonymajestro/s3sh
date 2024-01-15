@@ -16,13 +16,21 @@ npx s3sh
 /$ ls
 directory1/
 directory2/
-file.txt
+file.html
+
+/$ cat file.txt
+<html>
+<h1>Hello s3sh!</h1>
+</html>
 
 /$ cd directory1
 /directory1/$ ls
 directory3/
 file2.txt
 file3.txt
+
+/directory1/$ cat file2.txt
+Hello from s3sh!
 ```
 
 You can also require s3sh and use it as a library:
@@ -45,6 +53,10 @@ const run = async () => {
   dirs.forEach(dir => {
     console.log(dir);
   });
+
+  const dir = dirs[0];
+  console.log(`Contents of in ${dir}:`);
+  console.log(await shell.cat(dir));
 };
 
 run();
