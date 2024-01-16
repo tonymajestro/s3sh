@@ -28,14 +28,19 @@ class S3Shell {
     return await shell_ls(this.client, this.bucket, this.dirs);
   }
 
-  async cd(arg) {
+  async cd(args) {
+    const arg = args.length ? args[0].trim() : '';
     const { bucket, dirs } = await shell_cd(this.client, this.bucket, this.dirs, arg);
     this.bucket = bucket;
     this.dirs = dirs;
   }
 
-  async cat(arg) {
-    return await shell_cat(this.client, this.bucket, this.dirs, arg);
+  async cat(args) {
+    const contents = await Promise.all(args.map(async arg => {
+      return await shell_cat(this.client, this.bucket, this.dirs, arg);
+    }));
+
+    return contents.join('\n');
   }
 }
 

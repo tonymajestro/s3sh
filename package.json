@@ -10,7 +10,7 @@
     "s3"
   ],
   "scripts": {
-    "start": "npx ."
+    "start": "node src/s3sh"
   },
   "author": "Tony Majestro",
   "repository": {

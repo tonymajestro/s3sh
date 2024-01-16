@@ -23,7 +23,7 @@ const prompt = async (shell) => {
   rl.on('line', async (line) => {
     const parts = line.trim().split(' ');
     const command = parts[0];
-    const arg = parts.length == 2 ? parts[1] : '';
+    const args = parts.slice(1);
 
     try {
       switch (command) {
@@ -35,11 +35,11 @@ const prompt = async (shell) => {
           console.log();
           break;
         case 'cat':
-          const content = await shell.cat(arg);
+          const content = await shell.cat(args);
           console.log(content);
           break;
         case 'cd':
-          await shell.cd(arg);
+          await shell.cd(args);
           rl.setPrompt(shell.prompt);
           break;
         case 'exit':
