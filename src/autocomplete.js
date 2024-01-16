@@ -1,5 +1,3 @@
-const readline = require('readline');
-
 const commands = [
   'cat',
   'cd',

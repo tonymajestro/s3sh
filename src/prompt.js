@@ -2,7 +2,10 @@ const readline = require('node:readline');
 const autocomplete = require('./autocomplete');
 
 const helpText = `
-  usage:
+  usage: npx s3sh
+         npx s3sh --profile [profile] --region [region]
+
+  Available commands:
     cat      - prints contents of a file
     cd       - changes buckets or directory. 'cd ..' will go back one directory
     ls       - prints files and directory names in current bucket/directory
