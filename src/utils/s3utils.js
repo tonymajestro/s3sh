@@ -5,7 +5,12 @@ const {
   HeadBucketCommand } = require("@aws-sdk/client-s3");
 const { appendSlash } = require("./path");
 
-const createClient = () => new S3Client({});
+const createClient = (profile, region) => {
+  return new S3Client({
+    profile,
+    region
+  });
+}
 
 const listBuckets = async (client) => {
   const response = await client.send(new ListBucketsCommand({}));
@@ -55,7 +60,7 @@ const checkCredentials = async (client) => {
   try {
     await listBuckets(client);
   } catch(error) {
-    throw new Error("Error during initialization access denied.");
+    throw new Error(`Error during initialization: ${error}`);
   }
 };
 

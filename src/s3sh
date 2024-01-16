@@ -4,13 +4,14 @@ const S3Shell = require('./shell');
 const s3Utils = require('./utils/s3utils');
 const prompt = require('./prompt');
 
-const createShell = () => {
-  const client = s3Utils.createClient();
+const createShell = (profile, region) => {
+  const client = s3Utils.createClient(profile, region);
   return new S3Shell(client);
 }
 
 const run = async () => {
-  const client = s3Utils.createClient();
+  const argv = require('minimist')(process.argv.slice(2));
+  const client = s3Utils.createClient(argv.profile, argv.region);
   const shell = new S3Shell(client);
 
   await s3Utils.checkCredentials(client);

@@ -16,7 +16,7 @@ const cat = async (client, bucket, dirs, file) => {
 
   const key = pathUtils.join({
     dirs,
-    file: file
+    file
   });
 
   try {
@@ -24,7 +24,6 @@ const cat = async (client, bucket, dirs, file) => {
       Bucket: bucket,
       Key: key
     });
-    console.log(key);
 
     const response = await client.send(request);
     return await response.Body?.transformToString() ?? '';
