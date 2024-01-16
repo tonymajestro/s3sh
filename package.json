@@ -1,6 +1,6 @@
 {
   "name": "s3sh",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Shell utility for exploring and manipulating S3 files.",
   "bin": "./src/s3sh",
   "main": "./src/s3sh",
