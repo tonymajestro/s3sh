@@ -3,7 +3,7 @@ const {
   ListObjectsV2Command, 
   ListBucketsCommand,
   HeadBucketCommand } = require("@aws-sdk/client-s3");
-const { appendSlash } = require("./path");
+const pathUtils = require("./path");
 
 const createClient = (profile, region) => {
   return new S3Client({
@@ -14,7 +14,7 @@ const createClient = (profile, region) => {
 
 const listBuckets = async (client) => {
   const response = await client.send(new ListBucketsCommand({}));
-  return response.Buckets.map(bucket => appendSlash(bucket.Name));
+  return response.Buckets.map(bucket => pathUtils.addRightSlash(bucket.Name));
 }
 
 const listObjects = async (client, bucket, prefix) => {
@@ -27,7 +27,8 @@ const listObjects = async (client, bucket, prefix) => {
   return response.Contents?.map(obj => obj.Key) ?? [];
 }
 
-const listObjectsInDirectory = async (client, bucket, dirs, prefix) => {
+const listObjectsInDirectory = async (client, bucket, dirs) => {
+  const prefix = pathUtils.getPrefix(dirs);
   const objects = await listObjects(client, bucket, prefix);
 
   const filesAndDirs = new Set();
@@ -37,7 +38,7 @@ const listObjectsInDirectory = async (client, bucket, dirs, prefix) => {
 
     // Append / to directories
     if (dirs.length != split.length - 1) {
-      fileOrDir = appendSlash(fileOrDir);
+      fileOrDir = pathUtils.addRightSlash(fileOrDir);
     }
 
     filesAndDirs.add(fileOrDir);

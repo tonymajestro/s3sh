@@ -1,43 +1,31 @@
 const { listObjectsInDirectory, doesBucketExist } = require('../utils/s3utils');
 const pathUtils = require('../utils/path')
 
-const cd = async (client, bucket, dirs, arg) => {
-  const path = pathUtils.stripSlash(arg);
-
+const cd = async (client, bucket, dirs) => {
   // cd with no args will reset the path back to root directory
-  if (!path) {
+  if (!bucket) {
     return { bucket: '', dirs: [] };
   } 
   
-  // cd .. goes back one directory
-  if (path === '..') {
-    if (dirs.length == 0) {
-      return { bucket: '', dirs };
-    } else {
-      dirs.pop();
-      return { bucket, dirs };
-    }
-  } 
-  
   // cd [bucket]
-  if (!bucket) {
-    if (await doesBucketExist(client, path)) {
-      return { bucket: path, dirs };
+  if (bucket && !dirs?.length) {
+    if (await doesBucketExist(client, bucket)) {
+      return { bucket, dirs };
     } else {
-      console.log(`cd: no such bucket: ${path}`);
+      console.log(`cd: no such bucket: ${bucket}`);
       return { bucket, dirs };
     }
   } 
   
   // cd [path]
-  // currently only supports one directory level at a time
-  const prefix = pathUtils.getPrefix(dirs);
-  const objects = await listObjectsInDirectory(client, bucket, dirs, prefix);
-  if (objects.find(obj => pathUtils.stripSlash(obj) === path)) {
+  const path = pathUtils.trimSlash(dirs.pop());
+  const objects = await listObjectsInDirectory(client, bucket, dirs);
+  if (objects.find(obj => pathUtils.trimSlash(obj) === path)) {
     dirs.push(path);
     return { bucket, dirs };
   } else {
-    console.log(`cd: no such directory: ${path}`)
+    const fullPath = pathUtils.join(bucket, dirs);
+    console.log(`cd: no such directory: ${fullPath}`);
     return { bucket, dirs };
   }
 }

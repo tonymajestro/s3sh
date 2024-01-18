@@ -1,9 +1,17 @@
+const pathUtils = require('./utils/path');
+
 const commands = [
   'cat',
   'cd',
   'ls',
   'exit',
   'help'
+];
+
+const commandsWithArgs = [
+  'cat',
+  'cd',
+  'ls',
 ];
 
 const autocomplete = (shell) => {
@@ -13,22 +21,33 @@ const autocomplete = (shell) => {
     if (parts.length <= 1) {
       // autocomplete the available commands
       const command = parts[0];
-      const hits = commands.filter((c) => c.startsWith(command));
+      const hits = commands.filter((path) => path.startsWith(command));
       callback(null, [hits.length ? hits : commands, command]);
       return;
     } 
 
     const command = parts[0].trim();
-    if (command === 'cd' || command === 'cat') {
-      // autocomplete buckets or s3 objects
-      shell.ls().then(paths => {
-        const argument = parts.slice(-1)[0];
-        const hits = paths.filter((c) => c.startsWith(argument));
+    if (!commandsWithArgs.includes(command)) {
+      callback(null, [[], line]);
+      return;
+    }
+
+    const argument = parts.slice(-1)[0];
+
+    if (pathUtils.isAbsolutePath(argument)) {
+      shell.ls('/').then(paths => {
+        const hits = paths
+          .map(path => pathUtils.addLeftSlash(path))
+          .filter((path) => path.startsWith(argument));
         callback(null, [hits.length ? hits : paths, argument]);
       });
-    } else {
-      callback(null, [[], line]);
+      return;
     }
+
+    shell.listObjectsOrBuckets(argument).then(paths => {
+      const hits = paths.filter((path) => path.startsWith(argument));
+      callback(null, [hits.length ? hits : paths, argument]);
+    });
   };
 
   return wrapper;

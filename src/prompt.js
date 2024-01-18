@@ -24,14 +24,14 @@ const prompt = async (shell) => {
   rl.prompt();
 
   rl.on('line', async (line) => {
-    const parts = line.trim().split(' ');
+    const parts = line.trim().split(/\s+/);
     const command = parts[0];
     const args = parts.slice(1);
 
     try {
       switch (command) {
         case 'ls':
-          const paths = await shell.ls();
+          const paths = await shell.ls(args);
           paths.forEach(path => {
             console.log(path);
           });
