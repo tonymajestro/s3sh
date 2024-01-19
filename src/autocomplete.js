@@ -44,7 +44,7 @@ const autocomplete = (shell) => {
       return;
     }
 
-    shell.listObjectsOrBuckets(argument).then(paths => {
+    shell.autocompletePath(argument).then(paths => {
       const hits = paths
         .map(path => {
           const currDir = argument.split('/').slice(0, -1);

@@ -25,11 +25,13 @@ class S3Shell {
     return `${path}$ `;
   }
 
-  async listObjectsOrBuckets(path) {
+  async autocompletePath(path) {
+    // Show paths in current directory
     if (!path.trim()) {
       return await shell_ls(this.client, this.bucket, this.dirs);
     }
 
+    // Show buckets
     if (!this.bucket) {
       return await s3Utils.listBuckets(this.client);
     }
@@ -40,14 +42,15 @@ class S3Shell {
       path: path
     });
 
+    // Show buckets
     if (this.bucket != bucket) {
       return await s3Utils.listBuckets(this.client);
     }
 
+    // Show files
     if (dirs.length && !path.endsWith('/')) {
       dirs.pop();
     }
-
     return await shell_ls(this.client, bucket, dirs);
   }
 
