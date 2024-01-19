@@ -5,8 +5,16 @@ An iteractive command line shell for navigating and manipulating files in AWS S3
 https://www.npmjs.com/package/s3sh
 
 ## Usage
-By default, s3sh will use the credentials in your ~/.aws/ directory.
+By default, s3sh will use the credentials in your ~/.aws/ directory. You can also pass in an AWS profile name using the --profile flag:
 
+```bash
+npx s3sh
+npx s3sh --profile [profileName]
+```
+
+
+## Examples
+You can use s3sh as a command line utility:
 
 ```bash
 npx s3sh
@@ -36,7 +44,11 @@ You can also require s3sh and use it as a library:
 
 ```javascript
 const s3sh = require('s3sh')
-const shell = s3sh.createShell();
+
+let shell = s3sh.createShell();
+
+// Can also create shell with AWS Profile:
+shell = s3sh.createShell('profileName');
 
 const run = async () => {
   console.log("Buckets:");
