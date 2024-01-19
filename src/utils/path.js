@@ -104,13 +104,14 @@ const joinDirs = (args) => {
   }
 
   if (path) {
-    // If path contains '..', go back one directory when constructing path
     trimSlash(path.trim())
     .split('/')
     .forEach(pathPart => {
       if (pathPart === '..' && parts.length) {
+        // If path contains '..', go back one directory when constructing path
         parts.pop();
-      } else {
+      } else if (pathPart !== '.') {
+        // Ignore '.', treat it as current directory
         parts.push(pathPart);
       }
     });
