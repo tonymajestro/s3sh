@@ -7,7 +7,8 @@ const ls = async (client, bucket, dirs) => {
     return buckets.sort();
   } else {
     // List all objects in bucket/directory
-    return await listObjectsInDirectory(client, bucket, dirs);
+    const objects = await listObjectsInDirectory(client, bucket, dirs);
+    return objects.filter(object => object.trim() !== '');
   }
 };
 

@@ -26,18 +26,29 @@ class S3Shell {
   }
 
   async listObjectsOrBuckets(path) {
+    if (!path.trim()) {
+      return await shell_ls(this.client, this.bucket, this.dirs);
+    }
+
+    if (!this.bucket) {
+      return await s3Utils.listBuckets(this.client);
+    }
+
     const { bucket, dirs } = pathUtils.joinDirs({
       bucket: this.bucket,
       dirs: this.dirs,
       path: path
     });
 
-    if (!dirs.length) {
+    if (this.bucket != bucket) {
       return await s3Utils.listBuckets(this.client);
-    } else {
-      const prefix = pathUtils.join('', dirs);
-      return await s3Utils.listObjects(this.client, bucket, prefix);
     }
+
+    if (dirs.length && !path.endsWith('/')) {
+      dirs.pop();
+    }
+
+    return await shell_ls(this.client, bucket, dirs);
   }
 
   async ls(args) {
@@ -76,6 +87,11 @@ class S3Shell {
 
   async cd(args) {
     const arg = args.length ? args[0].trim() : '';
+    if (!arg) {
+      this.bucket = '';
+      this.dirs = [];
+      return;
+    } 
 
     const { bucket, dirs } = pathUtils.joinDirs({
       bucket: this.bucket, 

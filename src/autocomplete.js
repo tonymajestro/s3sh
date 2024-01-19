@@ -38,14 +38,19 @@ const autocomplete = (shell) => {
       shell.ls('/').then(paths => {
         const hits = paths
           .map(path => pathUtils.addLeftSlash(path))
-          .filter((path) => path.startsWith(argument));
+          .filter(path => path.startsWith(argument));
         callback(null, [hits.length ? hits : paths, argument]);
       });
       return;
     }
 
     shell.listObjectsOrBuckets(argument).then(paths => {
-      const hits = paths.filter((path) => path.startsWith(argument));
+      const hits = paths
+        .map(path => {
+          const currDir = argument.split('/').slice(0, -1);
+          return pathUtils.join('', [...currDir, path]);
+        })
+        .filter(path => path.startsWith(argument))
       callback(null, [hits.length ? hits : paths, argument]);
     });
   };

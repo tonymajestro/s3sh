@@ -4,6 +4,7 @@ const pathUtils = require('../utils/path')
 const cd = async (client, bucket, dirs) => {
   // cd with no args will reset the path back to root directory
   if (!bucket) {
+    console.log("No bucket");
     return { bucket: '', dirs: [] };
   } 
   
