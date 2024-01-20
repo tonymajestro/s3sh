@@ -10,7 +10,8 @@
     "s3"
   ],
   "scripts": {
-    "start": "node src/s3sh"
+    "start": "node src/s3sh",
+    "test": "jest"
   },
   "author": "Tony Majestro",
   "repository": {
@@ -21,5 +22,11 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.490.0",
     "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testMatch": ["**/test/**/*.js"]
   }
 }
