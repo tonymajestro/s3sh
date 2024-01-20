@@ -1,21 +1,24 @@
 #!/usr/bin/env node
 
 const S3Shell = require('./shell');
-const s3Utils = require('./utils/s3utils');
+const S3Helper = require('./s3/s3Helper');
+const AutoComplete = require('./autocomplete');
+const { S3Client } = require("@aws-sdk/client-s3");
 const prompt = require('./prompt');
+const argv = require('minimist')(process.argv.slice(2));
 
 const createShell = (profile, region) => {
-  const client = s3Utils.createClient(profile, region);
-  return new S3Shell(client);
+  const client = new S3Client({ profile, region });
+  const s3Helper = new S3Helper(client);
+  return new S3Shell(s3Helper);
 }
 
 const run = async () => {
-  const argv = require('minimist')(process.argv.slice(2));
-  const client = s3Utils.createClient(argv.profile, argv.region);
-  const shell = new S3Shell(client);
+  const shell = createShell(argv.profile, argv.region);
+  const autocomplete = new AutoComplete(shell);
 
-  await s3Utils.checkCredentials(client);
-  await prompt(shell);
+  await shell.s3.checkCredentials();
+  await prompt(shell, autocomplete);
 };
 
 if (require.main === module) {

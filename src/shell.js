@@ -1,12 +1,11 @@
 const shell_ls = require('./commands/ls');
 const shell_cd = require('./commands/cd');
 const shell_cat = require('./commands/cat');
-const pathUtils = require('./utils/path');
-const s3Utils = require('./utils/s3utils');
+const pathUtils = require('./path/pathUtils');
 
 class S3Shell {
-  constructor(client) {
-    this.client = client;
+  constructor(s3) {
+    this.s3 = s3;
     this.bucket = '';
     this.dirs = [];
   }
@@ -16,48 +15,14 @@ class S3Shell {
       return '/$ ';
     }
 
-    const path = pathUtils.addSlash({
-      path: pathUtils.join(this.bucket, this.dirs),
-      initialSlash: true,
-      trailingSlash: true
-    });
-
-    return `${path}$ `;
-  }
-
-  async autocompletePath(path) {
-    // Show paths in current directory
-    if (!path.trim()) {
-      return await shell_ls(this.client, this.bucket, this.dirs);
-    }
-
-    // Show buckets
-    if (!this.bucket) {
-      return await s3Utils.listBuckets(this.client);
-    }
-
-    const { bucket, dirs } = pathUtils.joinDirs({
-      bucket: this.bucket,
-      dirs: this.dirs,
-      path: path
-    });
-
-    // Show buckets
-    if (this.bucket != bucket) {
-      return await s3Utils.listBuckets(this.client);
-    }
-
-    // Show files
-    if (dirs.length && !path.endsWith('/')) {
-      dirs.pop();
-    }
-    return await shell_ls(this.client, bucket, dirs);
+    const path = pathUtils.join(this.bucket, this.dirs);
+    return `/${path}/$ `;
   }
 
   async ls(args) {
     if (!args?.length) {
       // No path given, display contents of current bucket/directory
-      return await shell_ls(this.client, this.bucket, this.dirs);
+      return await shell_ls(this.s3, this.bucket, this.dirs);
     } 
     
     if (args.length === 1) {
@@ -68,7 +33,7 @@ class S3Shell {
         path: args[0]
       });
 
-      return await shell_ls(this.client, bucket, dirs);
+      return await shell_ls(this.s3, bucket, dirs);
     }
 
       // Multiple paths given, display contents of each one
@@ -79,7 +44,7 @@ class S3Shell {
         path: arg
       });
 
-      const results = await shell_ls(this.client, bucket, dirs);
+      const results = await shell_ls(this.s3, bucket, dirs);
       return { path: arg, results };
     }));
 
@@ -89,12 +54,14 @@ class S3Shell {
   }
 
   async cd(args) {
-    const arg = args.length ? args[0].trim() : '';
+    let arg = args.length ? args[0].trim() : '';
     if (!arg) {
       this.bucket = '';
       this.dirs = [];
       return;
     } 
+
+    arg = pathUtils.addRightSlash(arg);
 
     const { bucket, dirs } = pathUtils.joinDirs({
       bucket: this.bucket, 
@@ -102,9 +69,13 @@ class S3Shell {
       path: arg
     });
 
-    const { newBucket = bucket, newDirs = dirs } = await shell_cd(this.client, bucket, dirs);
-    this.bucket = newBucket;
-    this.dirs = newDirs;
+    try {
+      const result = await shell_cd(this.s3, bucket, dirs);
+      this.bucket = result.bucket;
+      this.dirs = result.dirs;
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async cat(args) {
@@ -113,13 +84,13 @@ class S3Shell {
     }
 
     const contents = await Promise.all(args.map(async arg => {
-      const { bucket, dirs } = pathUtils.joinDirs({
+      const { bucket, dirs, path } = pathUtils.joinDirs({
         bucket: this.bucket,
         dirs: this.dirs,
         path: arg
       });
 
-      return await shell_cat(this.client, bucket, dirs, arg);
+      return await shell_cat(this.s3, bucket, dirs, path);
     }));
 
     return contents.join('\n');

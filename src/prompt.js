@@ -1,5 +1,5 @@
 const readline = require('node:readline');
-const autocomplete = require('./autocomplete');
+const AutoComplete = require('./autocomplete');
 
 const helpText = `
   usage: npx s3sh
@@ -13,12 +13,12 @@ const helpText = `
     help     - prints help text
 `;
 
-const prompt = async (shell) => {
+const prompt = async (shell, autocomplete) => {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: '/$ ',
-    completer: autocomplete(shell)
+    completer: (line, callback) => autocomplete.completeLine(line, callback)
   });
 
   rl.prompt();
@@ -57,7 +57,7 @@ const prompt = async (shell) => {
           break;
       }
     } catch (error) {
-      console.error(`Unexpected error: ${error}`)
+      console.error(`Unexpected error: ${error.message}`)
     }
 
     rl.prompt();

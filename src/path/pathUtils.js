@@ -42,24 +42,6 @@ const addRightSlash = path => {
   }
 };
 
-const addSlash = (args) => {
-  const { path = '', initialSlash = '', trailingSlash = '' } = args;
-
-  if (!path) {
-    return '/';
-  }
-
-  let result = path;
-  if (initialSlash) {
-    result = '/' + result;
-  }
-  if (trailingSlash) {
-    result += '/';
-  }
-
-  return result;
-};
-
 const getPrefix = (dirs) => {
   if (!dirs?.length) {
     return '';
@@ -72,76 +54,107 @@ const isAbsolutePath = (path) => {
   return path.trim().startsWith('/');
 };
 
+const isRelativePath = (path) => {
+  return !isAbsolutePath(path);
+};
+
 const joinDirs = (args) => {
-  const { bucket = '', dirs = '', path = '' } = args;
+  const { bucket = '', dirs = [], path = '' } = args;
 
-  if (isAbsolutePath(path)) {
-    // Path is absolute, ignore the existing bucket and directory
-    const parts = trimSlash(path.trim()).split('/');
+  if (!path) {
+    return {
+      bucket,
+      dirs,
+      path
+    };
+  }
 
-    if (!parts?.length) {
-      return { 
-        bucket: '', 
-        dirs: [] 
-      };
-    } else {
-      return { 
-        bucket: parts[0], 
-        dirs: parts.slice(1) 
-      };
+  const parts = [];
+
+  if (isRelativePath(path)) {
+    if (bucket) {
+      parts.push(bucket);
+    }
+
+    if (dirs) {
+      dirs.forEach(dir => {
+        parts.push(dir);
+      });
     }
   }
-  // Path is relative, add it to existing bucket and directory
-  const parts = [];
-  if (bucket) {
-    parts.push(bucket);
-  }
 
-  if (dirs) {
-    dirs.forEach(dir => {
-      parts.push(dir);
-    });
-  }
-
-  if (path) {
-    trimSlash(path.trim())
+  trimSlash(path.trim())
     .split('/')
     .forEach(pathPart => {
-      if (pathPart === '..' && parts.length) {
+      if (pathPart === '..' ) {
         // If path contains '..', go back one directory when constructing path
-        parts.pop();
+        if (parts?.length) {
+          parts.pop();
+        }
       } else if (pathPart !== '.') {
         // Ignore '.', treat it as current directory
         parts.push(pathPart);
       }
     });
-  }
 
-  if (!parts?.length) {
+  if (!parts.length) {
     return { 
       bucket: '', 
-      dirs: [] 
+      dirs: [],
+      path: ''
+    };
+  } 
+  
+  if (parts.length === 1) {
+    if (path.endsWith('/')) {
+      return {
+        bucket: parts[0],
+        dirs: [],
+        path: ''
+      };
+    } else {
+      return {
+        bucket: '',
+        dirs: [],
+        path: parts[0]
+      };
+    }
+  }
+
+  if (path.endsWith('/')) {
+    return {
+      bucket: parts[0],
+      dirs: parts.slice(1),
+      path: ''
     };
   } else {
-    return { 
-      bucket: parts[0], 
-      dirs: parts.slice(1) 
+    return {
+      bucket: parts[0],
+      dirs: parts.slice(1, -1),
+      path: parts.slice(-1)[0]
     };
   }
 };
 
-const join = (bucket, dirs) => {
+const join = (arg1, arg2, arg3) => {
+  const addPart = (arg, parts) => {
+    if (!arg) {
+      return;
+    }
+
+    if (Array.isArray(arg)) {
+      arg.forEach(part => {
+        parts.push(part);
+      });
+    } else {
+      parts.push(arg);
+    }
+  };
+
   const parts = [];
-
-  if (bucket) {
-    parts.push(bucket);
-  }
-
-  if (dirs) {
-    dirs.forEach(dir => {
-      parts.push(dir);
-    });
-  }
+  addPart(arg1, parts);
+  addPart(arg2, parts);
+  addPart(arg3, parts);
 
   return parts.join('/');
 };
@@ -151,7 +164,7 @@ module.exports = {
   trimLeftSlash,
   trimRightSlash,
   isAbsolutePath,
-  addSlash,
+  isRelativePath,
   addLeftSlash,
   addRightSlash,
   getPrefix,

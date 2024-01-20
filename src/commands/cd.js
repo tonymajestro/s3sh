@@ -1,33 +1,29 @@
-const { listObjectsInDirectory, doesBucketExist } = require('../utils/s3utils');
-const pathUtils = require('../utils/path')
+const pathUtils = require('../path/pathUtils')
 
-const cd = async (client, bucket, dirs) => {
+const cd = async (s3, bucket, dirs) => {
   // cd with no args will reset the path back to root directory
   if (!bucket) {
-    console.log("No bucket");
     return { bucket: '', dirs: [] };
   } 
   
   // cd [bucket]
   if (bucket && !dirs?.length) {
-    if (await doesBucketExist(client, bucket)) {
-      return { bucket, dirs };
+    if (await s3.doesBucketExist(bucket)) {
+      return { bucket, dirs, success: true };
     } else {
-      console.log(`cd: no such bucket: ${bucket}`);
-      return { bucket, dirs };
+      throw new Error(`cd: no such bucket: ${bucket}`);
     }
   } 
   
   // cd [path]
   const path = pathUtils.trimSlash(dirs.pop());
-  const objects = await listObjectsInDirectory(client, bucket, dirs);
+  const objects = await s3.listObjectsInDirectory(bucket, dirs);
   if (objects.find(obj => pathUtils.trimSlash(obj) === path)) {
-    dirs.push(path);
-    return { bucket, dirs };
+    const newDirs = [...dirs, path];
+    return { bucket, dirs: newDirs, success: true };
   } else {
     const fullPath = pathUtils.join(bucket, dirs);
-    console.log(`cd: no such directory: ${fullPath}`);
-    return { bucket, dirs };
+    throw new Error(`cd: no such directory: ${fullPath}`);
   }
 }
 
