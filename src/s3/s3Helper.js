@@ -69,6 +69,7 @@ class S3Helper {
   async checkCredentials() {
     try {
       await this.listBuckets();
+      return true;
     } catch(error) {
       throw new Error(`Error during initialization: ${error}`);
     }
