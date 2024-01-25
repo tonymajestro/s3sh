@@ -1,5 +1,4 @@
 const { 
-  S3Client, 
   GetObjectCommand,
   ListObjectsV2Command, 
   ListBucketsCommand,

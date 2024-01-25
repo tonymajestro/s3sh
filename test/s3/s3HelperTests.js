@@ -1,4 +1,4 @@
-const createMock = require('./mock');
+const { createMock } = require('./mock');
 
 test('Test getObjectContents', async () => {
   const getObjectResponse = {

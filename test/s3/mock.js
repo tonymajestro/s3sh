@@ -14,9 +14,20 @@ class MockS3Client {
   }
 }
 
+class MockError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.$metadata = { $httpStatusCode: statusCode }
+  }
+}
+
 const createMock = (response) => {
   const client = new MockS3Client(response);
   return new S3Helper(client);
 };
 
-module.exports = createMock;
+module.exports = {
+  createMock,
+  MockS3Client,
+  MockError
+};
