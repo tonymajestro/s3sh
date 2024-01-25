@@ -38,3 +38,15 @@ test('Test cat with permission denied', async () => {
   const catResponse = await cat(s3Helper, 'bucket', [], 'file');
   expect(catResponse).toEqual('cat file: Permission denied');
 });
+
+test('Test cat with no file found', async () => {
+  const s3Helper = createMock(new MockError("No file found", 404));
+  const catResponse = await cat(s3Helper, 'bucket', [], 'file');
+  expect(catResponse).toEqual('cat file: No such file or directory');
+});
+
+test('Test cat with generic error', async () => {
+  const s3Helper = createMock(new MockError("Generic error", 500));
+  const catResponse = await cat(s3Helper, 'bucket', [], 'file');
+  expect(catResponse).toEqual('cat error: Generic error');
+});
