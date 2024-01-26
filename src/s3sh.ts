@@ -7,7 +7,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
 import minimist = require('minimist')
 
-function createShell(profile?: string, region?: string): S3Shell{
+export default function createShell(profile?: string, region?: string): S3Shell{
   let s3Helper: S3Helper;
   if (profile) {
     s3Helper = new S3Helper(new S3Client({
@@ -21,7 +21,7 @@ function createShell(profile?: string, region?: string): S3Shell{
   return new S3Shell(s3Helper);
 }
 
-export async function run() {
+async function run() {
   const argv = minimist(process.argv.slice(2));
   const shell = createShell(argv.profile, argv.region);
   const autocomplete = new AutoComplete(shell);
