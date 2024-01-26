@@ -1,16 +1,20 @@
-const shell_ls = require('./commands/ls');
-const shell_cd = require('./commands/cd');
-const shell_cat = require('./commands/cat');
-const pathUtils = require('./path/pathUtils');
+import lsCmd from "./commands/ls";
+import cdCmd from "./commands/cd";
+import catCmd from "./commands/cat";
+import * as pathUtils from "./path/pathUtils";
 
-class S3Shell {
-  constructor(s3) {
-    this.s3 = s3;
+export default class S3Shell {
+  readonly s3Helper: any;
+  bucket: string;
+  dirs: string[];
+
+  constructor(s3Helper) {
+    this.s3Helper = s3Helper;
     this.bucket = '';
     this.dirs = [];
   }
 
-  get prompt() {
+  get prompt(): string {
     if (!this.bucket) {
       return '/$ ';
     }
@@ -19,41 +23,41 @@ class S3Shell {
     return `/${path}/$ `;
   }
 
-  async ls(args) {
-    if (!args?.length) {
+  async ls(args: string[]): Promise<string[]> {
+    if (!args.length) {
       // No path given, display contents of current bucket/directory
-      return await shell_ls(this.s3, this.bucket, this.dirs);
+      return await lsCmd(this.s3Helper, this.bucket, this.dirs);
     } 
     
     if (args.length === 1) {
       // One path given, display contents of that bucket/directory
-      const { bucket, dirs } = pathUtils.joinDirs({
+      const { bucket, dirs } = pathUtils.resolvePath({
         bucket: this.bucket,
         dirs: this.dirs,
         path: args[0]
       });
 
-      return await shell_ls(this.s3, bucket, dirs);
+      return await lsCmd(this.s3Helper, bucket, dirs);
     }
 
       // Multiple paths given, display contents of each one
     const contents = await Promise.all(args.map(async arg => {
-      const { bucket, dirs } = pathUtils.joinDirs({
+      const { bucket, dirs } = pathUtils.resolvePath({
         bucket: this.bucket,
         dirs: this.dirs,
         path: arg
       });
 
-      const results = await shell_ls(this.s3, bucket, dirs);
+      const results = await lsCmd(this.s3Helper, bucket, dirs);
       return { path: arg, results };
     }));
 
     return contents.map(content => {
-      return `${content.path}:\n${contents.results.join('\n')}`;
+      return `${content.path}:\n${content.results.join('\n')}`;
     });
   }
 
-  async cd(args) {
+  async cd(args: string[]): Promise<void> {
     let arg = args.length ? args[0].trim() : '';
     if (!arg) {
       this.bucket = '';
@@ -63,14 +67,14 @@ class S3Shell {
 
     arg = pathUtils.addRightSlash(arg);
 
-    const { bucket, dirs } = pathUtils.joinDirs({
+    const { bucket, dirs } = pathUtils.resolvePath({
       bucket: this.bucket, 
       dirs: this.dirs,
       path: arg
     });
 
     try {
-      const result = await shell_cd(this.s3, bucket, dirs);
+      const result = await cdCmd(this.s3Helper, bucket, dirs);
       this.bucket = result.bucket;
       this.dirs = result.dirs;
     } catch (error) {
@@ -78,23 +82,21 @@ class S3Shell {
     }
   }
 
-  async cat(args) {
-    if (!args?.length) {
+  async cat(args: string[]): Promise<string> {
+    if (!args.length) {
       throw new Error("cat: missing argument")
     }
 
     const contents = await Promise.all(args.map(async arg => {
-      const { bucket, dirs, path } = pathUtils.joinDirs({
+      const { bucket, dirs, path } = pathUtils.resolvePath({
         bucket: this.bucket,
         dirs: this.dirs,
         path: arg
       });
 
-      return await shell_cat(this.s3, bucket, dirs, path);
+      return await catCmd(this.s3Helper, bucket, dirs, path);
     }));
 
     return contents.join('\n');
   }
 }
-
-module.exports = S3Shell;

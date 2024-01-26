@@ -1,5 +1,6 @@
-const readline = require('node:readline');
-const AutoComplete = require('./autocomplete');
+import readline = require("node:readline");
+import AutoComplete from "./autocomplete";
+import S3Shell from "./shell";
 
 const helpText = `
   usage: npx s3sh
@@ -13,7 +14,7 @@ const helpText = `
     help     - prints help text
 `;
 
-const prompt = async (shell, autocomplete) => {
+export default async function prompt(shell: S3Shell, autocomplete: AutoComplete) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -23,7 +24,7 @@ const prompt = async (shell, autocomplete) => {
 
   rl.prompt();
 
-  rl.on('line', async (line) => {
+  rl.on('line', async (line: string) => {
     const parts = line.trim().split(/\s+/);
     const command = parts[0];
     const args = parts.slice(1);
@@ -66,5 +67,3 @@ const prompt = async (shell, autocomplete) => {
     process.exit(0);
   }); 
 }
-
-module.exports = prompt;

@@ -1,4 +1,5 @@
-const pathUtils = require('../../src/path/pathUtils');
+import { expect, test } from 'vitest'
+import * as pathUtils from "../../src/path/pathUtils";
 
 test('Test that trimSlash trims right and left slashes', () => {
   expect(pathUtils.trimSlash('foo')).toEqual('foo');
@@ -61,7 +62,7 @@ test('Test that join correctly joins buckets and directories', () => {
   expect(pathUtils.join('foo', ['bar/foobar'])).toEqual('foo/bar/foobar');
 });
 
-test('Test that joinDirs correctly joins buckets and directories', () => {
+test('Test that join correctly joins buckets and directories', () => {
   expect(pathUtils.join()).toEqual('');
 
   expect(pathUtils.join()).toEqual('');
@@ -74,14 +75,14 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
   expect(pathUtils.join('foo', ['bar/foobar'])).toEqual('foo/bar/foobar');
 });
 
-test('Test that joinDirs correctly joins buckets and directories', () => {
-  expect(pathUtils.joinDirs({})).toEqual({
+test('Test that resolvePath correctly joins buckets and directories', () => {
+  expect(pathUtils.resolvePath({})).toEqual({
     bucket: '',
     dirs: [],
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: ''
   })).toEqual({
     bucket: '',
@@ -89,7 +90,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: '',
     dirs: []
   })).toEqual({
@@ -98,7 +99,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: '',
     dirs: [],
     path: ''
@@ -108,7 +109,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: ''
@@ -118,7 +119,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: ''
@@ -128,7 +129,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: ''
@@ -138,7 +139,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar', 'foobar'],
     path: ''
@@ -148,7 +149,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: 'bar/'
@@ -158,7 +159,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: 'foobar/'
@@ -168,7 +169,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: '',
     dirs: [],
     path: '../'
@@ -178,7 +179,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: '../'
@@ -188,7 +189,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: '../'
@@ -198,7 +199,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar', 'foobar'],
     path: '../'
@@ -208,7 +209,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar', 'foobar'],
     path: '../../'
@@ -218,7 +219,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: '../foobar/'
@@ -228,7 +229,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: './'
@@ -238,7 +239,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: [],
     path: './bar/'
@@ -248,7 +249,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: './'
@@ -258,7 +259,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: '',
     dirs: [''],
     path: '/foo/bar/'
@@ -268,7 +269,7 @@ test('Test that joinDirs correctly joins buckets and directories', () => {
     path: ''
   });
 
-  expect(pathUtils.joinDirs({
+  expect(pathUtils.resolvePath({
     bucket: 'foo',
     dirs: ['bar'],
     path: '/bucket/dir/'

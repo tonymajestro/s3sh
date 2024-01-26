@@ -43,12 +43,12 @@ Hello from s3sh!
 You can also require s3sh and use it as a library:
 
 ```javascript
-const s3sh = require('s3sh')
+import createShell from "s3sh";
 
-let shell = s3sh.createShell();
+let shell = createShell();
 
 // Can also create shell with AWS Profile:
-shell = s3sh.createShell('profileName');
+shell = createShell("profileName");
 
 const run = async () => {
   console.log("Buckets:");

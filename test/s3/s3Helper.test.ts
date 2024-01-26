@@ -1,4 +1,5 @@
-const { createMock } = require('./mock');
+import { expect, test } from 'vitest'
+import { createMock } from "./mock";
 
 test('Test getObjectContents', async () => {
   const getObjectResponse = {

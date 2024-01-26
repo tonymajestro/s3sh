@@ -1,5 +1,7 @@
-const pathUtils = require('./path/pathUtils');
-const ls = require('./commands/ls');
+import * as pathUtils from "./path/pathUtils";
+import ls from "./commands/ls";
+import S3Shell from "./shell";
+import S3Helper from "./s3/s3Helper";
 
 const commands = [
   'cat',
@@ -17,34 +19,33 @@ const commandsWithArgs = [
 
 const defaultDirs = ['.', '..'];
 
-class AutoComplete {
-  constructor(shell) {
+export default class AutoComplete {
+  shell: S3Shell;
+  s3Helper: S3Helper;
+
+  constructor(shell: S3Shell) {
     this.shell = shell;
-    this.s3 = shell.s3;
+    this.s3Helper = shell.s3Helper;
   }
 
-  async getAutoCompletePaths(path) {
-    const joined = pathUtils.joinDirs({
+  async getAutoCompletePaths(newPath: string): Promise<string[]> {
+    const { bucket, dirs, path } = pathUtils.resolvePath({
       bucket: this.shell.bucket,
       dirs: this.shell.dirs,
-      path
+      path: newPath
     });
 
-    const newBucket = joined.bucket;
-    const newDirs = joined.dirs;
-    const newPath = joined.path;
-
-    if (!newBucket) {
-      const buckets = await this.s3.listBuckets();
+    if (!bucket) {
+      const buckets = await this.s3Helper.listBuckets();
       return [...defaultDirs, ...buckets];
     }
 
-    const objects = await ls(this.s3, newBucket, newDirs);
+    const objects = await ls(this.s3Helper, bucket, dirs);
     return [...defaultDirs, ...objects];
   }
 
-  completeLine(line, callback) {
-    const parts = line.trimLeft().split(/\s+/);
+  completeLine(line: string, callback) {
+    const parts = line.trimStart().split(/\s+/);
 
     // autocomplete the available commands
     if (parts.length <= 1) {
@@ -74,5 +75,3 @@ class AutoComplete {
     });
   }
 }
-
-module.exports = AutoComplete;

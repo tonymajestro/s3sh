@@ -1,5 +1,6 @@
-const cat = require('../../src/commands/cat');
-const { createMock, MockError } = require('../s3/mock');
+import { expect, test } from 'vitest'
+import cat from "../../src/commands/cat";
+import { createMock, MockError } from "../s3/mock";
 
 test('Test cat with bucket', async () => {
   const headBucketResponse = {

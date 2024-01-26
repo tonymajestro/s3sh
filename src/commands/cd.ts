@@ -1,6 +1,12 @@
-const pathUtils = require('../path/pathUtils')
+import * as pathUtils from "../path/pathUtils";
+import S3Helper from "../s3/s3Helper";
 
-const cd = async (s3Helper, bucket, dirs) => {
+export interface CdOutput {
+  bucket: string;
+  dirs: string[];
+}
+
+export default async function cd(s3Helper: S3Helper, bucket?: string, dirs?: string[]): Promise<CdOutput> {
   // cd with no args will reset the path back to root directory
   if (!bucket) {
     return { bucket: '', dirs: [] };
@@ -26,5 +32,3 @@ const cd = async (s3Helper, bucket, dirs) => {
     throw new Error(`cd: no such directory: ${fullPath}`);
   }
 }
-
-module.exports = cd;
