@@ -1,8 +1,20 @@
-const trimSlash = (path) => {
-  return trimLeftSlash(trimRightSlash(path));
+export interface ResolvePathOptions {
+  bucket?: string;
+  dirs?: string[];
+  path?: string;
 };
 
-const trimLeftSlash = path => {
+export interface ResolvePathOutput {
+  bucket: string;
+  dirs: string[];
+  path: string;
+};
+
+export function trimSlash(path: string): string {
+  return trimLeftSlash(trimRightSlash(path));
+}
+
+export function trimLeftSlash(path: string) : string {
   if (!path) {
     return path;
   } else if (path.startsWith('/')) {
@@ -10,9 +22,9 @@ const trimLeftSlash = path => {
   } else {
     return path;
   }
-};
+}
 
-const trimRightSlash = path => {
+export function trimRightSlash(path: string): string {
   if (!path) {
     return;
   } else if (path.endsWith('/')) {
@@ -20,9 +32,9 @@ const trimRightSlash = path => {
   } else {
     return path;
   }
-};
+}
 
-const addLeftSlash = path => {
+export function addLeftSlash(path: string): string {
   if (!path) {
     return '/';
   } else if (path.startsWith('/')) {
@@ -30,9 +42,9 @@ const addLeftSlash = path => {
   } else {
     return '/' + path;
   }
-};
+}
 
-const addRightSlash = path => {
+export function addRightSlash(path: string): string {
   if (!path) {
     return '/';
   } else if (path.endsWith('/')) {
@@ -40,26 +52,26 @@ const addRightSlash = path => {
   } else {
     return path + '/';
   }
-};
+}
 
-const getPrefix = (dirs) => {
+export function getPrefix(dirs: string[]): string {
   if (!dirs?.length) {
     return '';
   }
 
   return addRightSlash(dirs.join('/'));
-};
+}
 
-const isAbsolutePath = (path) => {
+export function isAbsolutePath(path: string): boolean {
   return path.trim().startsWith('/');
 };
 
-const isRelativePath = (path) => {
+export function isRelativePath(path: string): boolean {
   return !isAbsolutePath(path);
-};
+}
 
-const joinDirs = (args) => {
-  const { bucket = '', dirs = [], path = '' } = args;
+export function resolvePath(options: ResolvePathOptions): ResolvePathOutput {
+  const { bucket = '', dirs = [], path = '' } = options;
 
   if (!path) {
     return {
@@ -134,10 +146,14 @@ const joinDirs = (args) => {
       path: parts.slice(-1)[0]
     };
   }
-};
+}
 
-const join = (arg1, arg2, arg3) => {
-  const addPart = (arg, parts) => {
+export function join(
+  arg1?: string | string[], 
+  arg2?: string | string[], 
+  arg3?: string | string[]): string {
+
+  const addPart = (arg: string | string[], parts: string[]) => {
     if (!arg) {
       return;
     }
@@ -157,17 +173,4 @@ const join = (arg1, arg2, arg3) => {
   addPart(arg3, parts);
 
   return parts.join('/');
-};
-
-module.exports = {
-  trimSlash,
-  trimLeftSlash,
-  trimRightSlash,
-  isAbsolutePath,
-  isRelativePath,
-  addLeftSlash,
-  addRightSlash,
-  getPrefix,
-  joinDirs,
-  join
 }

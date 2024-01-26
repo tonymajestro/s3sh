@@ -2,16 +2,18 @@
   "name": "s3sh",
   "version": "0.0.10",
   "description": "Shell utility for exploring and manipulating S3 files.",
-  "bin": "./src/s3sh",
-  "main": "./src/s3sh",
+  "bin": "./build/s3sh.js",
+  "main": "./build/s3sh.js",
   "keywords": [
     "shell",
     "aws",
     "s3"
   ],
   "scripts": {
-    "start": "node src/s3sh",
-    "test": "jest"
+    "start": "node build/s3sh.js",
+    "prestart": "npm run build",
+    "build": "npx tsc",
+    "test": "vitest"
   },
   "author": "Tony Majestro",
   "repository": {
@@ -21,12 +23,14 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/credential-providers": "^3.499.0",
     "minimist": "^1.2.8"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
-  },
-  "jest": {
-    "testMatch": ["**/test/**/*Tests.js"]
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^20.11.6",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
   }
 }
+

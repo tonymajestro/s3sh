@@ -1,7 +1,11 @@
-const S3Helper = require('../../src/s3/s3Helper');
+import { S3Client} from "@aws-sdk/client-s3";
+import S3Helper from "../../src/s3/s3Helper";
 
-class MockS3Client {
+export class MockS3Client extends S3Client {
+  response: any;
+
   constructor(response) {
+    super();
     this.response = response;
   }
 
@@ -14,20 +18,16 @@ class MockS3Client {
   }
 }
 
-class MockError extends Error {
+export class MockError extends Error {
+  $metadata: any;
+
   constructor(message, statusCode) {
     super(message);
     this.$metadata = { $httpStatusCode: statusCode }
   }
 }
 
-const createMock = (response) => {
+export function createMock(response) {
   const client = new MockS3Client(response);
   return new S3Helper(client);
-};
-
-module.exports = {
-  createMock,
-  MockS3Client,
-  MockError
-};
+}

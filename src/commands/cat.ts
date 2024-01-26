@@ -1,6 +1,7 @@
-const pathUtils = require("../path/pathUtils"); 
+import * as pathUtils from "../path/pathUtils";
+import S3Helper from "../s3/s3Helper";
 
-const cat = async (s3Helper, bucket, dirs, path) => {
+export default async function cat(s3Helper: S3Helper, bucket: string, dirs: string[], path: string): Promise<string> {
   if (!bucket) {
     if (await s3Helper.doesBucketExist(path)) {
       return `cat ${path}: is a bucket`;
@@ -23,5 +24,3 @@ const cat = async (s3Helper, bucket, dirs, path) => {
     }
   }
 }
-
-module.exports = cat;
