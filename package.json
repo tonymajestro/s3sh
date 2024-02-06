@@ -1,6 +1,6 @@
 {
   "name": "s3sh",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Shell utility for exploring and manipulating S3 files.",
   "bin": "./build/s3sh.js",
   "main": "./build/s3sh.js",
@@ -10,9 +10,9 @@
     "s3"
   ],
   "scripts": {
-    "start": "node build/s3sh.js",
-    "prestart": "npm run build",
-    "build": "npx tsc",
+    "start": "npm run build && node build/s3sh.js",
+    "build": "tsc",
+    "preinstall": "npm run build",
     "test": "vitest"
   },
   "author": "Tony Majestro",
@@ -27,10 +27,10 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
     "@types/minimist": "^1.2.5",
     "@types/node": "^20.11.6",
     "typescript": "^5.3.3",
     "vitest": "^1.2.1"
   }
 }
-

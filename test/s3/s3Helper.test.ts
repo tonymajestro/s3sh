@@ -147,5 +147,5 @@ test('Test check credentials', async () => {
 
 test('Test check credentials fails', () => {
   const s3Helper = createMock(new Error("cannot access buckets"));
-  return expect(s3Helper.checkCredentials()).rejects.toThrow();
+  return expect(() => s3Helper.checkCredentials()).rejects.toThrow();
 });

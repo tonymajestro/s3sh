@@ -58,7 +58,11 @@ export default async function prompt(shell: S3Shell, autocomplete: AutoComplete)
           break;
       }
     } catch (error) {
-      console.error(`Unexpected error: ${error.message}`)
+      if (error instanceof Error) {
+        console.error(`Unexpected error: ${error.message}`);
+      } else {
+        console.error(`Unexpected error: ${error}`);
+      }
     }
 
     rl.prompt();

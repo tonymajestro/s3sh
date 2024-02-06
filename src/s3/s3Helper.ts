@@ -27,7 +27,7 @@ export default class S3Helper {
 
   async listBuckets(): Promise<string[]> {
     const response = await this.s3Client.send(new ListBucketsCommand({}));
-    return response.Buckets.map(bucket => pathUtils.addRightSlash(bucket.Name));
+    return response.Buckets?.map(bucket => pathUtils.addRightSlash(bucket.Name!)) ?? [];
   }
 
   async listObjects(bucket: string, prefix?: string): Promise<string[]> {
@@ -37,7 +37,7 @@ export default class S3Helper {
     });
 
     const response = await(this.s3Client.send(request));
-    return response.Contents?.map(obj => obj.Key) ?? [];
+    return response.Contents?.map(obj => obj.Key!) ?? [];
   }
 
   async listObjectsInDirectory(bucket: string, dirs: string[]): Promise<string[]> {

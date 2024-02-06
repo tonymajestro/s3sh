@@ -44,7 +44,7 @@ export default class AutoComplete {
     return [...defaultDirs, ...objects];
   }
 
-  completeLine(line: string, callback) {
+  completeLine(line: string, callback: any) {
     const parts = line.trimStart().split(/\s+/);
 
     // autocomplete the available commands

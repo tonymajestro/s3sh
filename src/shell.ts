@@ -2,13 +2,14 @@ import lsCmd from "./commands/ls";
 import cdCmd from "./commands/cd";
 import catCmd from "./commands/cat";
 import * as pathUtils from "./path/pathUtils";
+import S3Helper from "./s3/s3Helper";
 
 export default class S3Shell {
   readonly s3Helper: any;
   bucket: string;
   dirs: string[];
 
-  constructor(s3Helper) {
+  constructor(s3Helper: S3Helper) {
     this.s3Helper = s3Helper;
     this.bucket = '';
     this.dirs = [];
@@ -78,7 +79,11 @@ export default class S3Shell {
       this.bucket = result.bucket;
       this.dirs = result.dirs;
     } catch (error) {
-      console.error(error.message);
+      if (error instanceof (Error)) {
+        console.error(error.message);
+      } else {
+        console.error(error);
+      }
     }
   }
 

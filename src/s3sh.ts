@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import S3Shell from "./shell";
 import S3Helper from "./s3/s3Helper";
 import AutoComplete from "./autocomplete";

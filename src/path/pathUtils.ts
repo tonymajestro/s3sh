@@ -15,9 +15,7 @@ export function trimSlash(path: string): string {
 }
 
 export function trimLeftSlash(path: string) : string {
-  if (!path) {
-    return path;
-  } else if (path.startsWith('/')) {
+  if (path.startsWith('/')) {
     return path.substring(1);
   } else {
     return path;
@@ -25,9 +23,7 @@ export function trimLeftSlash(path: string) : string {
 }
 
 export function trimRightSlash(path: string): string {
-  if (!path) {
-    return;
-  } else if (path.endsWith('/')) {
+  if (path.endsWith('/')) {
     return path.substring(0, path.length - 1);
   } else {
     return path;
@@ -35,9 +31,7 @@ export function trimRightSlash(path: string): string {
 }
 
 export function addLeftSlash(path: string): string {
-  if (!path) {
-    return '/';
-  } else if (path.startsWith('/')) {
+  if (path.startsWith('/')) {
     return path;
   } else {
     return '/' + path;
@@ -45,9 +39,7 @@ export function addLeftSlash(path: string): string {
 }
 
 export function addRightSlash(path: string): string {
-  if (!path) {
-    return '/';
-  } else if (path.endsWith('/')) {
+  if (path.endsWith('/')) {
     return path;
   } else {
     return path + '/';
@@ -55,7 +47,7 @@ export function addRightSlash(path: string): string {
 }
 
 export function getPrefix(dirs: string[]): string {
-  if (!dirs?.length) {
+  if (!dirs.length) {
     return '';
   }
 
@@ -81,7 +73,7 @@ export function resolvePath(options: ResolvePathOptions): ResolvePathOutput {
     };
   }
 
-  const parts = [];
+  const parts: string[] = [];
 
   if (isRelativePath(path)) {
     if (bucket) {
@@ -153,24 +145,14 @@ export function join(
   arg2?: string | string[], 
   arg3?: string | string[]): string {
 
-  const addPart = (arg: string | string[], parts: string[]) => {
+  const flatten = (arg?: string | string[]) => {
     if (!arg) {
-      return;
+      return [];
     }
 
-    if (Array.isArray(arg)) {
-      arg.forEach(part => {
-        parts.push(part);
-      });
-    } else {
-      parts.push(arg);
-    }
+    return Array.isArray(arg) ? arg : [arg];
   };
 
-  const parts = [];
-  addPart(arg1, parts);
-  addPart(arg2, parts);
-  addPart(arg3, parts);
-
+  const parts = [...flatten(arg1), ...flatten(arg2), ...flatten(arg3)];
   return parts.join('/');
 }
